@@ -11,16 +11,8 @@ void main() {
   );
 }
 
-final staticStringProvider = Provider((Ref ref) {
-  return 'Hello, Riverpod!';
-});
-
-final intProvider = Provider((Ref ref) {
-  return 42;
-});
-
-final doubleProvider = Provider((Ref ref) {
-  return 42.65;
+final counterProvider = StateProvider<int>((Ref ref) {
+  return 0;
 });
 
 class MyApp extends ConsumerWidget {
@@ -28,12 +20,21 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final result = ref.watch(staticStringProvider);
-    final resultInt = ref.watch(intProvider);
-    final resultDouble = ref.watch(doubleProvider);
+    debugPrint('build method loaded');
     return Scaffold(
+      appBar: AppBar(title: Text('State Provider Tutorial')),
       body: Center(
-        child: Text(result + resultInt.toString() + resultDouble.toString()),
+        child: Consumer(
+          builder: (BuildContext context, WidgetRef ref, Widget? child) {
+            final int counter = ref.watch(counterProvider);
+            debugPrint('Consumer method loaded');
+            return Text(counter.toString());
+          },
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => ref.read(counterProvider.notifier).state++,
+        child: const Icon(Icons.add),
       ),
     );
   }
